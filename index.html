@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Will You Be My Valentine? 💝</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=Nunito:wght@400;700&display=swap" rel="stylesheet"/>
+<style>
+  /* ─── Reset & Base ─── */
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --pink:      #ff6b9d;
+    --pink-light:#ffb3d1;
+    --rose:      #e8355e;
+    --cream:     #fff5f7;
+    --text:      #5a1a2a;
+    --shadow:    0 8px 30px rgba(232, 53, 94, .25);
+  }
+
+  body {
+    min-height: 100vh;
+    font-family: 'Nunito', sans-serif;
+    background: var(--cream);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* ─── Floating Hearts Background ─── */
+  .hearts-bg { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+  .heart {
+    position: absolute;
+    font-size: 1.4rem;
+    opacity: 0;
+    animation: floatUp linear infinite;
+  }
+  @keyframes floatUp {
+    0%   { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+    10%  { opacity: .6; }
+    90%  { opacity: .4; }
+    100% { transform: translateY(-120px) rotate(360deg); opacity: 0; }
+  }
+
+  /* ─── Card ─── */
+  .card {
+    position: relative;
+    z-index: 1;
+    background: #fff;
+    border-radius: 28px;
+    padding: 48px 40px 44px;
+    max-width: 480px;
+    width: 90%;
+    text-align: center;
+    box-shadow: var(--shadow);
+    border: 2px solid var(--pink-light);
+    animation: cardPop .5s cubic-bezier(.34,1.56,.64,1) both;
+  }
+  @keyframes cardPop {
+    from { transform: scale(.8); opacity: 0; }
+    to   { transform: scale(1);  opacity: 1; }
+  }
+
+  /* ─── Question Screen ─── */
+  .question-title {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 2rem;
+    color: var(--text);
+    line-height: 1.3;
+    margin-bottom: 20px;
+  }
+
+  .gif-container {
+    width: 100%;
+    max-width: 280px;
+    margin: 0 auto 28px;
+    border-radius: 18px;
+    overflow: hidden;
+    border: 3px solid var(--pink-light);
+  }
+  .gif-container img { width: 100%; display: block; }
+
+  /* ─── Buttons ─── */
+  .btn {
+    display: inline-block;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    font-size: 1.15rem;
+    padding: 12px 32px;
+    border-radius: 50px;
+    border: none;
+    cursor: pointer;
+    transition: transform .15s, box-shadow .15s;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  .btn:active { transform: scale(.93) !important; }
+
+  .btn-yes {
+    background: linear-gradient(135deg, var(--pink), var(--rose));
+    color: #fff;
+    box-shadow: var(--shadow);
+    margin-right: 12px;
+  }
+  .btn-yes:hover { transform: scale(1.08); box-shadow: 0 10px 36px rgba(232,53,94,.4); }
+
+  .btn-no {
+    background: #fff;
+    color: var(--rose);
+    border: 2px solid var(--pink-light);
+    position: absolute; /* floats freely */
+    transition: transform .15s, box-shadow .15s, font-size .3s;
+  }
+  .btn-no:hover { box-shadow: 0 4px 16px rgba(232,53,94,.2); }
+
+  .btn-row {
+    position: relative;
+    min-height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* ─── Yes / Celebration Screen ─── */
+  .celebration { display: none; }
+  .celebration.show { display: block; animation: cardPop .4s cubic-bezier(.34,1.56,.64,1) both; }
+
+  .celebration-title {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 2.4rem;
+    color: var(--rose);
+    margin-bottom: 12px;
+  }
+  .celebration-sub {
+    font-size: 1.05rem;
+    color: var(--text);
+    opacity: .75;
+    margin-bottom: 24px;
+  }
+  .celebration-emoji { font-size: 3.8rem; display: block; margin-bottom: 8px; }
+
+  /* ─── Confetti ─── */
+  .confetti-piece {
+    position: fixed;
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+    top: -20px;
+    pointer-events: none;
+    z-index: 999;
+    animation: confettiFall linear forwards;
+  }
+  @keyframes confettiFall {
+    0%   { transform: translateY(0) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+  }
+
+  /* ─── Photo Strip ─── */
+  .photo-strip-label {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: .95rem;
+    color: var(--pink);
+    margin-bottom: 10px;
+    opacity: .85;
+  }
+  .photo-strip {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    padding: 12px 4px 18px;
+    margin: 0 -10px 24px;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    scroll-snap-type: x mandatory;
+  }
+  .photo-strip::-webkit-scrollbar { display: none; }
+
+  .polaroid {
+    flex: 0 0 auto;
+    width: 180px;
+    background: #fff;
+    border: 2px solid var(--pink-light);
+    border-radius: 8px;
+    padding: 8px 8px 36px;
+    box-shadow: 2px 4px 12px rgba(232,53,94,.15);
+    scroll-snap-align: start;
+    opacity: 0;
+    transform: translateY(18px) rotate(0deg);
+    animation: polaroidPop .45s cubic-bezier(.34,1.56,.64,1) forwards;
+    cursor: pointer;
+    transition: transform .2s, box-shadow .2s;
+  }
+  .polaroid:hover {
+    transform: translateY(-4px) scale(1.06);
+    box-shadow: 3px 8px 20px rgba(232,53,94,.25);
+    z-index: 2;
+  }
+  /* stagger each polaroid */
+  .polaroid:nth-child(1) { animation-delay: .1s;  transform: rotate(-2deg); }
+  .polaroid:nth-child(2) { animation-delay: .2s;  transform: rotate(1.5deg); }
+  .polaroid:nth-child(3) { animation-delay: .3s;  transform: rotate(-1deg); }
+  .polaroid:nth-child(4) { animation-delay: .4s;  transform: rotate(2deg); }
+  .polaroid:nth-child(5) { animation-delay: .5s;  transform: rotate(-1.5deg); }
+  .polaroid:nth-child(6) { animation-delay: .6s;  transform: rotate(1deg); }
+
+  @keyframes polaroidPop {
+    to { opacity: 1; }
+  }
+
+  .polaroid img {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    border-radius: 3px;
+    display: block;
+    background: var(--pink-light);
+  }
+  .polaroid-caption {
+    font-size: .78rem;
+    color: var(--text);
+    text-align: center;
+    margin-top: 7px;
+    opacity: .7;
+    font-weight: 700;
+  }
+
+  /* ─── Lightbox ─── */
+  .lightbox-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(90,26,42,.7);
+    backdrop-filter: blur(4px);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    animation: fadeIn .2s ease;
+  }
+  .lightbox-overlay.show { display: flex; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+  .lightbox-img {
+    max-width: 88vw;
+    max-height: 78vh;
+    border-radius: 12px;
+    border: 4px solid #fff;
+    box-shadow: 0 12px 48px rgba(0,0,0,.4);
+    object-fit: contain;
+    animation: imgPop .25s cubic-bezier(.34,1.56,.64,1) both;
+  }
+  @keyframes imgPop {
+    from { transform: scale(.85); opacity: 0; }
+    to   { transform: scale(1);   opacity: 1; }
+  }
+  .lightbox-caption {
+    position: absolute;
+    bottom: 10vh;
+    color: #fff;
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 1.1rem;
+    opacity: .9;
+    text-shadow: 0 2px 8px rgba(0,0,0,.5);
+  }
+
+  /* ─── No-counter badge ─── */
+  .no-counter {
+    font-size: .78rem;
+    color: var(--pink);
+    opacity: .6;
+    margin-top: 14px;
+    min-height: 1.2em;
+    font-weight: 700;
+  }
+
+  /* ─── Go Back button ─── */
+  .btn-goback {
+    display: inline-block;
+    margin-top: 22px;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    font-size: .85rem;
+    color: var(--pink);
+    background: none;
+    border: 1.5px solid var(--pink-light);
+    border-radius: 50px;
+    padding: 8px 22px;
+    cursor: pointer;
+    transition: background .2s, color .2s, border-color .2s;
+  }
+  .btn-goback:hover {
+    background: var(--pink-light);
+    color: var(--rose);
+    border-color: var(--pink);
+  }
+</style>
+</head>
+<body>
+
+<!-- Floating hearts layer -->
+<div class="hearts-bg" id="heartsBg"></div>
+
+<!-- Main card -->
+<div class="card">
+
+  <!-- Question Screen -->
+  <div id="questionScreen">
+    <h1 class="question-title">Isabel Eva Horney, will you be<br/>my valentine on February 14, 2026? 💝</h1>
+
+    <div class="gif-container" onclick="openLightbox('https://media.giphy.com/media/NqZn5kPN8VVrW/giphy.gif','The cat approves 🐱')" style="cursor:pointer;">
+      <img src="https://media.giphy.com/media/NqZn5kPN8VVrW/giphy.gif" alt="funny cat gif" />
+    </div>
+
+    <p class="photo-strip-label">✨Here is to more!✨</p>
+    <div class="photo-strip" id="photoStrip">
+      <div class="polaroid" onclick="openLightbox('image1.jpg','Us at the beach 🏖️')">
+        <img src="image1.jpg" alt="Photo 1" onerror="this.style.background='var(--pink-light)'" />
+        <div class="polaroid-caption">Montreal</div>
+      </div>
+      <div class="polaroid" onclick="openLightbox('image2.jpg','Movie night 🍿')">
+        <img src="image2.jpg" alt="Photo 2" onerror="this.style.background='var(--pink-light)'" />
+        <div class="polaroid-caption">Scarsdale</div>
+      </div>
+      <div class="polaroid" onclick="openLightbox('image3.jpg','Our favourite café ☕')">
+        <img src="image3.jpg" alt="Photo 3" onerror="this.style.background='var(--pink-light)'" />
+        <div class="polaroid-caption">Nebo</div>
+      </div>
+      <div class="polaroid" onclick="openLightbox('image4.jpg','Adventure day 🌲')">
+        <img src="image4.jpg" alt="Photo 4" onerror="this.style.background='var(--pink-light)'" />
+        <div class="polaroid-caption">Sombr Concert</div>
+      </div>
+      <div class="polaroid" onclick="openLightbox('image5.jpg','Late night walks 🌙')">
+        <img src="image5.jpg" alt="Photo 5" onerror="this.style.background='var(--pink-light)'" />
+        <div class="polaroid-caption">Bryant Park</div>
+      </div>
+      <div class="polaroid" onclick="openLightbox('image6.jpg','Just us 💕')">
+        <img src="image6.jpg" alt="Photo 6" onerror="this.style.background='var(--pink-light)'" />
+        <div class="polaroid-caption">Your favorite Times Square</div>
+      </div>
+    </div>
+
+    <div class="btn-row" id="btnRow">
+      <button class="btn btn-yes" id="btnYes">Yes!</button>
+      <button class="btn btn-no"  id="btnNo">No</button>
+    </div>
+    <div class="no-counter" id="noCounter"></div>
+  </div>
+
+  <!-- Celebration Screen -->
+  <div class="celebration" id="celebrationScreen">
+    <span class="celebration-emoji">🎉💕</span>
+    <h2 class="celebration-title">Yay! 🥰</h2>
+    <p class="celebration-sub">I knew you'd say yes!</p>
+    <div class="gif-container" onclick="openLightbox('https://media.giphy.com/media/3o7abAHdYvZdBNnGZq/giphy.gif','Party time! 🎉')" style="max-width:220px; margin:0 auto; cursor:pointer;">
+      <img src="https://media.giphy.com/media/3o7abAHdYvZdBNnGZq/giphy.gif" alt="celebration gif" />
+    </div>
+    <button class="btn-goback" id="btnGoBack">← Go back</button>
+  </div>
+
+</div>
+
+<!-- Lightbox -->
+<div class="lightbox-overlay" id="lightbox" onclick="closeLightbox()">
+  <img class="lightbox-img" id="lightboxImg" src="" alt="lightbox" />
+  <div class="lightbox-caption" id="lightboxCaption"></div>
+</div>
+
+<script>
+(function(){
+  // ─── Floating Hearts ───
+  const heartsBg = document.getElementById('heartsBg');
+  const heartEmojis = ['💕','💗','💖','💝','💘','❤️','🌹'];
+  function spawnHeart() {
+    const h = document.createElement('span');
+    h.classList.add('heart');
+    h.textContent = heartEmojis[Math.random()*heartEmojis.length|0];
+    h.style.left = Math.random()*100 + 'vw';
+    const dur = 6 + Math.random()*6; // 6–12 s
+    h.style.animationDuration = dur + 's';
+    h.style.animationDelay = Math.random()*3 + 's';
+    h.style.fontSize = (.8 + Math.random()*1.4) + 'rem';
+    heartsBg.appendChild(h);
+    setTimeout(() => h.remove(), (dur+3)*1000);
+  }
+  for(let i=0;i<12;i++) spawnHeart();
+  setInterval(spawnHeart, 900);
+
+  // ─── No Button – runs away ───
+  const btnNo      = document.getElementById('btnNo');
+  const btnRow     = document.getElementById('btnRow');
+  const noCounter  = document.getElementById('noCounter');
+  let   noCount    = 0;
+  let   noSize     = 1.15; // rem – shrinks each time
+
+  // Position No button initially (centered-ish)
+  btnNo.style.position = 'absolute';
+  btnNo.style.left = '58%';
+  btnNo.style.top  = '50%';
+  btnNo.style.transform = 'translate(-50%,-50%)';
+
+  function getRandomPos() {
+    // Keep it inside the card area (roughly)
+    const card = document.querySelector('.card');
+    const rect = card.getBoundingClientRect();
+    const bw   = btnNo.offsetWidth;
+    const bh   = btnNo.offsetHeight;
+    const x = Math.random()*(rect.width  - bw);
+    const y = Math.random()*(rect.height - bh - 30); // avoid bottom overflow
+    return { x, y };
+  }
+
+  btnNo.addEventListener('mouseenter', () => {
+    noCount++;
+    // Shrink it a little (min 0.7rem)
+    noSize = Math.max(0.7, noSize - 0.06);
+    btnNo.style.fontSize = noSize + 'rem';
+    btnNo.style.padding  = (noSize*8) + 'px ' + (noSize*22) + 'px';
+
+    // Teleport
+    const pos = getRandomPos();
+    btnNo.style.left  = pos.x + 'px';
+    btnNo.style.top   = pos.y + 'px';
+    btnNo.style.transform = 'none';
+
+    // Funny messages
+    const msgs = [
+      "Are you sure? 👀",
+      "Hehe, try again!",
+      "You can't catch me!",
+      "Nice try… 😏",
+      "Keep trying! 😘",
+      "Slowpoke!",
+      "You'll never get me!",
+      "Oopsie!",
+      "Haha! 🏃‍♂️💨",
+      "Good luck with that!"
+    ];
+    noCounter.textContent = msgs[Math.min(noCount-1, msgs.length-1)];
+  });
+
+  // Also handle touch (mobile)
+  btnNo.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    noCount++;
+    noSize = Math.max(0.7, noSize - 0.06);
+    btnNo.style.fontSize = noSize + 'rem';
+    btnNo.style.padding  = (noSize*8) + 'px ' + (noSize*22) + 'px';
+    const pos = getRandomPos();
+    btnNo.style.left  = pos.x + 'px';
+    btnNo.style.top   = pos.y + 'px';
+    btnNo.style.transform = 'none';
+    const msgs = ["Are you sure? 👀","Hehe, try again!","You can't catch me!","Nice try… 😏","Keep trying! 😘","Slowpoke!","You'll never get me!","Oopsie!","Haha! 🏃‍♂️💨","Good luck with that!"];
+    noCounter.textContent = msgs[Math.min(noCount-1, msgs.length-1)];
+  }, { passive: false });
+
+  // ─── Yes Button – celebrate ───
+  document.getElementById('btnYes').addEventListener('click', () => {
+    document.getElementById('questionScreen').style.display  = 'none';
+    const cel = document.getElementById('celebrationScreen');
+    cel.classList.add('show');
+    launchConfetti();
+  });
+
+  // ─── Confetti ───
+  const colors = ['#ff6b9d','#e8355e','#ffb3d1','#ffd700','#fff','#ff4757','#a29bfe'];
+  function launchConfetti() {
+    for(let i=0; i<70; i++) {
+      setTimeout(() => {
+        const c = document.createElement('div');
+        c.classList.add('confetti-piece');
+        c.style.left  = (20 + Math.random()*60) + 'vw';
+        c.style.background = colors[Math.random()*colors.length|0];
+        const dur = 1.2 + Math.random()*1.5;
+        c.style.animationDuration = dur + 's';
+        c.style.width  = (6+Math.random()*8) + 'px';
+        c.style.height = (6+Math.random()*8) + 'px';
+        c.style.borderRadius = Math.random()>0.5 ? '50%' : '2px';
+        document.body.appendChild(c);
+        setTimeout(() => c.remove(), dur*1000+100);
+      }, i * 30);
+    }
+  }
+  // ─── Go Back ───
+  document.getElementById('btnGoBack').addEventListener('click', () => {
+    document.getElementById('celebrationScreen').classList.remove('show');
+    document.getElementById('questionScreen').style.display = 'block';
+  });
+
+  // ─── Lightbox ───
+  window.openLightbox = function(src, caption) {
+    document.getElementById('lightboxImg').src = src;
+    document.getElementById('lightboxCaption').textContent = caption;
+    document.getElementById('lightbox').classList.add('show');
+  };
+  window.closeLightbox = function() {
+    document.getElementById('lightbox').classList.remove('show');
+  };
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeLightbox();
+  });
+
+})();
+</script>
+</body>
+</html>
