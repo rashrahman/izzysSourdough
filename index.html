@@ -25,7 +25,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    overflow: hidden;
+    padding: 40px 0;
+    overflow-x: hidden;
     position: relative;
   }
 
@@ -311,19 +312,19 @@
 
   <!-- Question Screen -->
   <div id="questionScreen">
-    <h1 class="question-title">Isabel Eva Horney, will you be<br/>my valentine on February 14, 2026? 💝</h1>
+    <h1 class="question-title">Isabel Eva Horney, will you be<br/>my valentine on February 14, 2026 and forever? 💝</h1>
 
     <div class="gif-container" onclick="openLightbox('https://media.giphy.com/media/NqZn5kPN8VVrW/giphy.gif','The cat approves 🐱')" style="cursor:pointer;">
       <img src="https://media.giphy.com/media/NqZn5kPN8VVrW/giphy.gif" alt="funny cat gif" />
     </div>
 
-    <p class="photo-strip-label">✨Here is to more!✨</p>
+    <p class="photo-strip-label">✨ Here's to more! ✨</p>
     <div class="photo-strip" id="photoStrip">
-      <div class="polaroid" onclick="openLightbox('image1.jpg','Us at the beach 🏖️')">
+      <div class="polaroid" onclick="openLightbox('image1.jpg','')">
         <img src="image1.jpg" alt="Photo 1" onerror="this.style.background='var(--pink-light)'" />
         <div class="polaroid-caption">Montreal</div>
       </div>
-      <div class="polaroid" onclick="openLightbox('image2.jpg','Movie night 🍿')">
+      <div class="polaroid" onclick="openLightbox('image2.jpg','')">
         <img src="image2.jpg" alt="Photo 2" onerror="this.style.background='var(--pink-light)'" />
         <div class="polaroid-caption">Scarsdale</div>
       </div>
@@ -341,7 +342,7 @@
       </div>
       <div class="polaroid" onclick="openLightbox('image6.jpg','Just us 💕')">
         <img src="image6.jpg" alt="Photo 6" onerror="this.style.background='var(--pink-light)'" />
-        <div class="polaroid-caption">Your favorite Times Square</div>
+        <div class="polaroid-caption">Your fav Times Square</div>
       </div>
     </div>
 
